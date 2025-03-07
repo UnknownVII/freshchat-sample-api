@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
-import { FlightStatus } from "../utils/enums/flightStatus";
+import { FlightStatus } from "../utils/enums/flightStatus.js";
 
 const client = new DynamoDBClient({ region: process.env.AWS_REGION });
 
@@ -33,6 +33,8 @@ export const createBooking = async (event) => {
       message: "Booking created",
       bookingId,
       flightStatus,
+      flightNumber,
+      date,
     }),
   };
 };

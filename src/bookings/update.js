@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { FlightStatus } from "../utils/enums/flightStatus";
+import { FlightStatus } from "../utils/enums/flightStatus.js";
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
 
