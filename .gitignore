@@ -1,2 +1,11 @@
 node_modules
 .serverless
+.env
+terraform/.terraform
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/.terraform.lock.hcl.backup
+terraform/.terraform.lock.info
+terraform/*.tfvars
+terraform/*.tfplan

@@ -1,18 +1,53 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: powermaccenter
+org: kenshibu
 # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
-app: freshchat-learn-sample-api
+app: ${env:APP_NAME}
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: freshchat-sample-api
+service: ${env:SERVICE_NAME}
+
+package:
+  exclude:
+    - terraform/**
+    - terraform/**/*
 
 provider:
   name: aws
   runtime: nodejs20.x
+  region: ap-southeast-2
+  stage: dev
+  logRetentionInDays: 180
+  memorySize: 512
+  timeout: 29
+  versionFunctions: false
+  role: ${env:LAMBDA_EXECUTION_ROLE_ARN}
+  environment:
+    DYNAMODB_TABLE_NAME: ${env:DYNAMODB_TABLE_NAME}
 
 functions:
-  hello:
-    handler: handler.hello
+  createBooking:
+    handler: index.createBooking
     events:
-      - httpApi:
-          path: /
+      - http:
+          path: booking
+          method: post
+
+  getBooking:
+    handler: index.getBooking
+    events:
+      - http:
+          path: booking/{id}
           method: get
+
+  updateBooking:
+    handler: index.updateBooking
+    events:
+      - http:
+          path: booking/{id}
+          method: put
+
+  deleteBooking:
+    handler: index.deleteBooking
+    events:
+      - http:
+          path: booking/{id}
+          method: delete
