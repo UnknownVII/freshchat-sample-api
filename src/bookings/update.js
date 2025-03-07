@@ -1,11 +1,13 @@
 import AWS from "aws-sdk";
+import { FlightStatus } from "../utils/enums/flightStatus";
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
 
 export const updateBooking = async (event) => {
   const { id } = event.pathParameters;
-  const { flightNumber, date, email } = JSON.parse(event.body);
+  const { flightNumber, date, email, flightStatus } = JSON.parse(event.body);
 
+  // Check if the booking exists
   const checkParams = {
     TableName: TABLE_NAME,
     Key: { bookingId: id },
@@ -22,7 +24,19 @@ export const updateBooking = async (event) => {
     };
   }
 
-  // Step 2: Build UpdateExpression dynamically
+  // Validate flightStatus if provided
+  if (flightStatus && !Object.values(FlightStatus).includes(flightStatus)) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: `Invalid flight status. Allowed values: ${Object.values(
+          FlightStatus
+        ).join(", ")}`,
+      }),
+    };
+  }
+
+  // Build UpdateExpression dynamically
   let updateExpression = "SET";
   let expressionAttributeValues = {};
   let expressionAttributeNames = {};
@@ -39,6 +53,10 @@ export const updateBooking = async (event) => {
   if (email) {
     updateExpression += " email = :e,";
     expressionAttributeValues[":e"] = email;
+  }
+  if (flightStatus) {
+    updateExpression += " flightStatus = :fs,";
+    expressionAttributeValues[":fs"] = flightStatus;
   }
 
   // Remove trailing comma
